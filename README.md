@@ -6,9 +6,76 @@ Bu proje, Flutter kullanarak geliştirilen bir mobil uygulamadır. Aşağıda, p
 
 ## Yapılanlar
 
-- **HttpManager Sınıfı**: HTTP isteklerini yöneten ve başlıkları dinamik olarak güncelleyebilen bir sınıf eklendi. `X-API-USER-CODE` başlığı, kullanıcı kodu ile güncelleniyor.
-- **AbstractService Sınıfı**: CRUD işlemleri için temel bir servis sınıfı oluşturuldu. Bu sınıf, `get`, `post`, `put`, ve `delete` işlemlerini yönetir.
-- **AuthService Sınıfı**: Kullanıcı ile ilgili oturum açma ve diğer işlemleri yönetmek için bir servis sınıfı eklendi.
+- **HttpManager Sınıfı**: 
+  - HTTP isteklerini yönetir ve dinamik başlıkları günceller.
+  - `X-API-USER-CODE` başlığı, kullanıcı kodu ile güncellenir.
+  - İstek, yanıt ve hata günlüklerini kaydeden `DioLogger` kullanılır.
+
+- **AbstractService Sınıfı**: 
+  - CRUD işlemleri için temel bir servis sınıfı sağlar.
+  - `get`, `post`, `put`, `delete` işlemlerini destekler.
+  - Hatalı yanıt durumlarında `HttpException` fırlatılır.
+
+- **AuthService Sınıfı**: 
+  - Kullanıcı oturum açma ve diğer kullanıcı işlemlerini yönetir.
+  - `connect` yöntemi, kullanıcı bağlantısını gerçekleştiren bir POST isteği yapar.
+
+- **Cache Manager**:
+  - Uygulama içi verilerin önbelleğe alınmasını ve yönetilmesini sağlar.
+  - Verimli veri erişimi ve performans için cache kullanımı yapılır.
+
+- **Network Manager**:
+  - API isteklerini ve yanıtlarını yönetir.
+  - Bağlantı kontrolü ve ağ hatalarını ele alır.
+  - `Dio` paketini kullanarak HTTP işlemlerini yönetir.
+
+- **Asset Loader**:
+  - Uygulama içindeki varlıkları (resimler, sesler vb.) merkezi bir yerden yönetir.
+  - Varlıkların düzenli ve erişilebilir olmasını sağlar.
+
+- **MVVM (Model-View-ViewModel)**:
+  - Uygulama mimarisinde MVVM desenini kullanır.
+  - Verilerin ve iş mantığının kullanıcı arayüzünden ayrılmasını sağlar.
+
+- **Dependency Injection (GetIt)**:
+  - Servislerin ve bileşenlerin bağımlılıklarını yönetir.
+  - `get_it` paketini kullanarak bağımlılıkları çözümleyip sağlar.
+
+- **BLoC (Business Logic Component)**:
+  - İş mantığını ve durum yönetimini ayırır.
+  - `flutter_bloc` paketini kullanarak olaylara tepki verir ve durumu yönetir.
+
+- **Localization**:
+  - Uygulama çok dilli destek sağlar.
+  - `flutter_localizations` paketini kullanarak çeşitli dillerde kullanıcı arayüzü sağlar.
+
+- **Constants**:
+  - Uygulama genelinde kullanılan sabit değerleri merkezi bir yerde tutar.
+  - API URL'leri, hata mesajları ve diğer sabitler burada tanımlanır.
+
+- **Enums**:
+  - Sabitler ve durumlar için enum sınıfları kullanılır.
+  - Kodun okunabilirliğini artırır ve hataları azaltır.
+
+- **Extensions**:
+  - Mevcut sınıflara yeni işlevsellikler ekler.
+  - Kodun daha temiz ve okunabilir olmasını sağlar.
+
+- **Routers**:
+  - Uygulama içi yönlendirmeleri yönetir.
+  - `go_router` veya benzeri paketleri kullanarak ekranlar arası geçişleri yönetir.
+
+- **Initialization**:
+  - Uygulama başlatıldığında gerekli tüm yapılandırmalar ve başlangıç işlemleri yapılır.
+  - Bağımlılıkların ve servislerin başlatılması burada gerçekleştirilir.
+
+- **Custom Exception Handler**:
+  - Özel hata yönetimi ve hata mesajlarını ele alır.
+  - `HttpException` sınıfını kullanarak ağ hatalarını ve diğer istisnaları işler.
+
+- **Theme Management**:
+  - Uygulamanın temasını ve stilini yönetir.
+  - `ThemeData` kullanarak uygulama genelinde tutarlı bir görünüm sağlar.
 
 ## Kullanılan Paketler
 
