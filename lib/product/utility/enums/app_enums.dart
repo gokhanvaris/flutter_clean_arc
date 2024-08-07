@@ -16,3 +16,5 @@ enum Locales {
   final Locale locale;
   const Locales(this.locale);
 }
+
+enum NetworkStatus { connected, disconnected }

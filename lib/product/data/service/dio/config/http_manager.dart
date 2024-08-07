@@ -22,7 +22,7 @@ class HttpManager {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
-          options.headers["X-API-USER-CODE"] = HttpManager.user?.userCode;
+          // options.headers["X-API-USER-CODE"] = HttpManager.user?.userCode;
 
           DioLogger.onSend(tag!, options);
           return handler.next(options);

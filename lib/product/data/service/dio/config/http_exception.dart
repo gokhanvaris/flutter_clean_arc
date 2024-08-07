@@ -1,56 +1,51 @@
 import 'package:dio/dio.dart';
 
 class HttpException implements Exception {
-  Response response;
+  final Response? response;
 
-  HttpException(
-    this.response,
-  );
+  HttpException(this.response);
 
   @override
-  String toString() {
-    return 'HttpException{response: $response}';
+  String toString() => 'HttpException{response: $response}';
+
+  static String handleError(Object error) {
+    if (error is DioException) {
+      return _handleDioError(error);
+    }
+    return 'unknownError';
   }
 
-  static String handleError(Exception? error) {
-    String? errorDescription = "";
-    if (error is DioException) {
-      switch (error.type) {
-        case DioExceptionType.badResponse:
-          if (error.response?.statusCode == 503 ||
-              error.response?.statusCode == 502) {
-            errorDescription = 'maintenance';
-          } else if (error.response?.statusCode == 500) {
-            errorDescription = error.response?.data["error"];
-          } else if (error.response?.statusCode == 403) {
-            if (error.response?.data["message"] == 'requiredUpdate') {
-              errorDescription = 'requiredUpdate';
-            }
-          }
-          break;
-        case DioExceptionType.connectionTimeout:
-          errorDescription = error.response?.data;
-          break;
-        case DioExceptionType.connectionError:
-          errorDescription = error.response?.data;
-          break;
-        case DioExceptionType.badCertificate:
-          errorDescription = error.response?.data;
-          break;
-        case DioExceptionType.sendTimeout:
-          errorDescription = error.response?.data;
-          break;
-        case DioExceptionType.receiveTimeout:
-          errorDescription = error.response?.data;
-          break;
-        case DioExceptionType.cancel:
-          errorDescription = error.response?.data;
-          break;
-        case DioExceptionType.unknown:
-          errorDescription = error.response?.data;
-          break;
-      }
+  static String _handleDioError(DioException error) {
+    switch (error.type) {
+      case DioExceptionType.badResponse:
+        return _handleBadResponse(error.response);
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        return 'timeoutError';
+      case DioExceptionType.badCertificate:
+        return 'badCertificateError';
+      case DioExceptionType.connectionError:
+        return 'connectionError';
+      case DioExceptionType.cancel:
+        return 'requestCancelled';
+      default:
+        return 'unknownError';
     }
-    return errorDescription ?? 'unknownError';
+  }
+
+  static String _handleBadResponse(Response? response) {
+    final statusCode = response?.statusCode;
+    if (statusCode == 503 || statusCode == 502) {
+      return 'maintenance';
+    } else if (statusCode == 500) {
+      return response?.data['error'] ?? 'serverError';
+    } else if (statusCode == 403) {
+      if (response?.data['message'] == 'requiredUpdate') {
+        return 'requiredUpdate';
+      }
+      return 'forbiddenError';
+    }
+    return 'unknownError';
   }
 }
