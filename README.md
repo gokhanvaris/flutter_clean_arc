@@ -1,6 +1,6 @@
 # Clean Flutter
 
-![Flutter Logo](https://storage.googleapis.com/cms-storage-bucket/ec64036b4eacc9f3fd73.svg) ![Dart Logo](https://dart.dev/assets/img/logo/logo-white-text.svg)
+<img src="https://storage.googleapis.com/cms-storage-bucket/ec64036b4eacc9f3fd73.svg" alt="Flutter Logo" width="100" height="100"/> <br/> <img src="https://dart.dev/assets/img/logo/logo-white-text.svg" alt="Dart Logo" width="100" height="100"/>
 
 Bu proje, Flutter kullanarak geliştirilen bir mobil uygulamadır. Aşağıda, projenin içeriği ve kullanılan teknolojiler hakkında bilgi bulabilirsiniz.
 
