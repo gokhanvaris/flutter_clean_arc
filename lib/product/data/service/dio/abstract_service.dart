@@ -3,152 +3,115 @@ import 'package:flutter_clean_arc/product/data/service/dio/config/http_exception
 import 'package:flutter_clean_arc/product/data/service/dio/config/http_manager.dart';
 
 abstract class AbstractService<E> {
-  final String? _path;
-  final String? _tag;
-  final String? baseUrl;
-  final bool? isAuth;
-  Dio? _client;
+  final String path;
+  final String? tag;
+  final Dio _client;
 
-  AbstractService(
-    this._path,
-    this._tag, {
-    this.baseUrl,
-    this.isAuth = false,
-  }) {
-    _client = HttpManager(
-      tag: _tag,
-      baseUrl: baseUrl,
-      isAuth: isAuth,
-    ).client;
-  }
+  AbstractService(this.path, {this.tag, String? baseUrl, bool isAuth = false})
+      : _client =
+            HttpManager(baseUrl: baseUrl, isAuth: isAuth, tag: tag).client;
 
   Future<Response> get({
-    String? innerPath = "",
+    String innerPath = "",
     CancelToken? cancelToken,
-    Map<String, dynamic>? queryParameters = const {},
+    Map<String, dynamic> queryParameters = const {},
   }) async {
     try {
-      final response = await _client?.get(
-        "/$_path/$innerPath",
-        queryParameters: queryParameters ?? {},
+      final response = await _client.get(
+        "/$path/$innerPath",
+        queryParameters: queryParameters,
         cancelToken: cancelToken ?? CancelToken(),
       );
-      throwIfNoSuccess(response);
-      return response ?? Response(requestOptions: RequestOptions(path: ''));
+      _checkResponse(response);
+      return response;
     } catch (e) {
-      rethrow;
+      throw HttpException.handleError(e);
     }
   }
 
-  post(E entity, String innerPath) async {
-    try {
-      final response =
-          await _client?.post<E>("$_path/$innerPath", data: entity);
-      throwIfNoSuccess(response);
-      return response;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  postCustom({
-    String? innerPath = "",
+  Future<Response> post({
+    required E entity,
+    required String innerPath,
     CancelToken? cancelToken,
-    required data,
-    Map<String, dynamic>? queryParameters = const {},
-    Options? options,
+    Map<String, dynamic> queryParameters = const {},
   }) async {
     try {
-      print(innerPath);
-      print(data);
-      final response = await _client?.post(
-        "$_path/$innerPath",
-        queryParameters: queryParameters ?? {},
-        data: data,
-        options: options ?? Options(),
+      final response = await _client.post(
+        "/$path/$innerPath",
+        data: entity,
+        queryParameters: queryParameters,
         cancelToken: cancelToken ?? CancelToken(),
       );
-      throwIfNoSuccess(response);
+      _checkResponse(response);
       return response;
     } catch (e) {
-      rethrow;
+      throw HttpException.handleError(e);
     }
   }
 
   Future<Response> put({
-    String? innerPath = "",
+    String innerPath = "",
     CancelToken? cancelToken,
-    Map<String, String>? queryParameters = const {},
+    Map<String, String> queryParameters = const {},
   }) async {
     try {
-      final response = await _client?.put(
-        "/$_path/$innerPath",
-        queryParameters: queryParameters ?? {},
+      final response = await _client.put(
+        "/$path/$innerPath",
+        queryParameters: queryParameters,
         cancelToken: cancelToken ?? CancelToken(),
       );
-      throwIfNoSuccess(response);
-      return response ?? Response(requestOptions: RequestOptions(path: ''));
+      _checkResponse(response);
+      return response;
     } catch (e) {
-      rethrow;
+      throw HttpException.handleError(e);
     }
   }
 
   Future<Response> delete({
-    String? innerPath = "",
+    String innerPath = "",
     CancelToken? cancelToken,
-    Map<String, String>? queryParameters = const {},
+    Map<String, String> queryParameters = const {},
   }) async {
     try {
-      final response = await _client?.delete(
-        "/$_path/$innerPath",
-        queryParameters: queryParameters ?? {},
+      final response = await _client.delete(
+        "/$path/$innerPath",
+        queryParameters: queryParameters,
         cancelToken: cancelToken ?? CancelToken(),
       );
-      throwIfNoSuccess(response);
-      return response ?? Response(requestOptions: RequestOptions(path: ""));
+      _checkResponse(response);
+      return response;
     } catch (e) {
-      rethrow;
+      throw HttpException.handleError(e);
     }
   }
 
-  void throwIfNoSuccess(Response? response) {
-    if ((response?.statusCode ?? 0) < 200 ||
-        (response?.statusCode ?? 0) > 299) {
-      throw HttpException(
-          response ?? Response(requestOptions: RequestOptions(path: "")));
+  void _checkResponse(Response response) {
+    if (response.statusCode == null ||
+        response.statusCode! < 200 ||
+        response.statusCode! > 299) {
+      throw HttpException(response);
     }
   }
 
-  postCustomString({
-    String? innerPath = "",
+  Future<Response> postCustom({
+    required String innerPath,
+    required dynamic data,
+    Map<String, dynamic> queryParameters = const {},
     CancelToken? cancelToken,
-    required data,
-    Map<String, dynamic>? queryParameters = const {},
     Options? options,
   }) async {
     try {
-      final Response<String>? response = await _client?.post(
-        "$_path/$innerPath",
-        queryParameters: queryParameters ?? {},
+      final response = await _client.post(
+        "/$path/$innerPath",
         data: data,
-        options: options ?? Options(),
+        queryParameters: queryParameters,
         cancelToken: cancelToken ?? CancelToken(),
+        options: options ?? Options(),
       );
-      throwIfNoSuccess(response);
+      _checkResponse(response);
       return response;
     } catch (e) {
-      rethrow;
-    }
-  }
-
-  postString(E entity, String innerPath) async {
-    try {
-      final Response<String>? response =
-          await _client?.post("$_path/$innerPath", data: entity);
-      throwIfNoSuccess(response);
-      return response;
-    } catch (e) {
-      rethrow;
+      throw HttpException.handleError(e);
     }
   }
 }
